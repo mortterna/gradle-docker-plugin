@@ -139,6 +139,15 @@ interface ThreadContextClassLoader {
     def createExposedPortsArray(List<DockerCreateContainer.ExposedPort> exposedPorts)
 
     /**
+     * Creates instance of <a href="https://github.com/docker-java/docker-java/blob/master/src/main/java/com/github/dockerjava/api/model/HealthCheck.java">HealthCheck</a>
+     * from thread context classloader.
+     *
+     * @param healthCheck HealthCheck
+     * @return Instance
+     */
+    def createHealthCheck(Object healthCheck)
+
+    /**
      * Creates instance of <a href="https://github.com/docker-java/docker-java/blob/master/src/main/java/com/github/dockerjava/api/model/PortBinding.java">PortBinding</a>
      * from thread context classloader.
      *

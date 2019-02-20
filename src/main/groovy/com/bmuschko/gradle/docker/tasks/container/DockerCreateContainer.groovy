@@ -142,6 +142,10 @@ class DockerCreateContainer extends DockerExistingImage {
 
     @Input
     @Optional
+    final Property<HealthCheck> healthCheck = project.objects.property(HealthCheck)
+
+    @Input
+    @Optional
     final Property<Map<String,String>> binds = project.objects.property(Map)
 
     @Input
@@ -219,6 +223,7 @@ class DockerCreateContainer extends DockerExistingImage {
         volumes.set([])
         volumesFrom.set([])
         exposedPorts.set([])
+        healthCheck.set(null)
         extraHosts.set([])
         privileged.set(false)
         tty.set(false)
@@ -377,6 +382,11 @@ class DockerCreateContainer extends DockerExistingImage {
             containerCommand.withExposedPorts(ports)
         }
 
+        if(healthCheck.getOrNull()) {
+            def createdHealthCheck = threadContextClassLoader.createHealthCheck(healthCheck.get())
+            containerCommand.withHealthcheck(createdHealthCheck)
+        }
+
         if(portBindings.getOrNull()) {
             def createdPortBindings = portBindings.get().collect { threadContextClassLoader.createPortBinding(it) }
             containerCommand.hostConfig.withPortBindings(threadContextClassLoader.createPorts(createdPortBindings))
@@ -450,6 +460,14 @@ class DockerCreateContainer extends DockerExistingImage {
             this.internetProtocol = internetProtocol
             this.ports = ports
         }
+    }
+
+    static class HealthCheck {
+        @Input Long interval
+        @Input Long timeout
+        @Input List<String> test = []
+        @Input Long retries
+        @Input Long startPeriod
     }
 }
 

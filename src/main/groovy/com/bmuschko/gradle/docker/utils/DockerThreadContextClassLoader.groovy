@@ -306,6 +306,21 @@ class DockerThreadContextClassLoader implements ThreadContextClassLoader {
      * {@inheritDoc}
      */
     @Override
+    def createHealthCheck(Object healthCheckConfig) {
+        Class healthCheckClass = loadClass("${MODEL_PACKAGE}.HealthCheck")
+        def healthCheck = healthCheckClass.newInstance()
+        healthCheck
+            .withInterval(healthCheckConfig.interval.getOrNull())
+            .withTimeout(healthCheckConfig.timeout.getOrNull())
+            .withTest(healthCheckConfig.test.getOrNull())
+            .withRetries(healthCheckConfig.retries.getOrNull())
+            .withStartPeriod(healthCheckConfig.startPeriod.getOrNull())
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     def createPortBinding(String portBinding) {
         Class portBindingClass = loadClass("${MODEL_PACKAGE}.PortBinding")
         Method method = portBindingClass.getMethod(PARSE_METHOD_NAME, String)
